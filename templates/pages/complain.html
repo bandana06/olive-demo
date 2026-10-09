@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Complain - Olive Cafe{% endblock %}
+
+{% block extra_head %}
+<style>
+    .complain-container {
+        max-width: 800px;
+        margin: 100px auto;
+        padding: 40px;
+        background: var(--color-bg-white);
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--color-primary);
+    }
+    
+    .form-group input, .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus, .form-group textarea:focus {
+        border-color: var(--color-accent);
+        outline: none;
+    }
+
+    .form-btn {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="complain-container gs-reveal">
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h1 style="font-size: 3rem; color: var(--color-accent); margin-bottom: 10px;">Feedback & Complaints</h1>
+        <p style="color: #666; font-size: 1.1rem;">We strive for perfection in every meal. Please let us know how we can improve.</p>
+    </div>
+
+    <form onsubmit="alert('Thank you for your feedback! Our management will review this shortly.'); return false;">
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" required placeholder="Your full name">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" required placeholder="Your email address">
+        </div>
+        <div class="form-group">
+            <label>Date of Visit (Optional)</label>
+            <input type="date">
+        </div>
+        <div class="form-group">
+            <label>Your Feedback / Complaint</label>
+            <textarea rows="6" required placeholder="Please describe your experience..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary form-btn">Submit Feedback</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    gsap.fromTo('.gs-reveal', {y: 50, opacity: 0}, {y: 0, opacity: 1, duration: 1, ease: 'power2.out', delay: 0.5});
+});
+</script>
+{% endblock %}

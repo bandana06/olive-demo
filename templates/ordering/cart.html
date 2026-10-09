@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Cart - Olive Cafe{% endblock %}
+{% block content %}
+<div style="padding: 100px 20px; color: var(--color-primary); max-width: 800px; margin: 0 auto; min-height: 60vh;">
+    <h1 style="text-align: center; margin-bottom: 2rem;">Your Cart</h1>
+    
+    <div id="cart-items" style="background: var(--color-bg-white); padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <!-- Items injected via JS -->
+    </div>
+
+    <div style="margin-top: 2rem; text-align: right;">
+        <a href="/ordering/checkout/" class="btn-primary" id="checkout-btn" style="display: none;">Proceed to Checkout</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const cartContainer = document.getElementById('cart-items');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        if (cart.length === 0) {
+            cartContainer.innerHTML = '<p style="text-align:center;">Your cart is empty.</p>';
+        } else {
+            let total = 0;
+            let html = '<ul style="list-style:none; padding:0;">';
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                html += `
+                    <li style="display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; padding: 1rem 0;">
+                        <span>${item.name} (x${item.qty})</span>
+                        <strong>Rs. ${item.price * item.qty}</strong>
+                    </li>
+                `;
+            });
+            html += `</ul>
+                <div style="text-align: right; margin-top: 1rem; font-size: 1.2rem;">
+                    <strong>Total: Rs. ${total}</strong>
+                </div>
+            `;
+            cartContainer.innerHTML = html;
+            checkoutBtn.style.display = 'inline-block';
+        }
+    });
+</script>
+{% endblock %}

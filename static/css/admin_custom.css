@@ -1,0 +1,66 @@
+/* Override Unfold's default primary-color text selection */
+::selection {
+    background-color: #b3d4fc !important;
+    /* Standard browser blue */
+    color: #000 !important;
+}
+
+::-moz-selection {
+    background-color: #b3d4fc !important;
+    color: #000 !important;
+}
+
+/* --- FORCE FIX FOR DARK MODE ADMIN COLORS --- */
+
+/* Force all normal text to be light gray */
+html.dark body,
+html.dark p,
+html.dark span,
+html.dark td,
+html.dark th,
+html.dark label,
+html.dark div,
+html.dark .text-font-default-light,
+html.dark .text-font-default-dark {
+    color: #f3f4f6 !important; /* light gray */
+}
+
+/* Force headings to be pure white */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+    color: #ffffff !important;
+}
+
+/* Force links, active states, and primary texts to a bright neon green */
+html.dark a,
+html.dark .text-primary-500,
+html.dark .text-primary-600,
+html.dark .text-primary-700,
+html.dark aside a.active,
+html.dark aside a:hover {
+    color: #22c55e !important; /* bright neon green */
+}
+
+/* Exclude inputs so they remain usable */
+html.dark input, 
+html.dark select, 
+html.dark textarea {
+    color: #e5e7eb !important;
+    background-color: #1f2937 !important;
+}
+
+/* Ensure backgrounds of buttons are bright green */
+html.dark .bg-primary-600,
+html.dark .bg-primary-700,
+html.dark .bg-primary-500 {
+    background-color: #22c55e !important;
+    color: #000000 !important; /* Dark text on bright button */
+}
+
+html.dark button {
+    color: inherit;
+}

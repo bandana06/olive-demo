@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %}About - Olive Cafe{% endblock %}
+
+{% block extra_head %}
+<style>
+    .page-header {
+        background: linear-gradient(rgba(30, 63, 32, 0.85), rgba(30, 63, 32, 0.85)), url('https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=2070&auto=format&fit=crop') center/cover;
+        height: 60vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--color-bg-light);
+        text-align: center;
+    }
+    
+    .page-title {
+        font-size: 4rem;
+        color: var(--color-accent);
+    }
+
+    .about-content {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-lg);
+    }
+    
+    .about-section {
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .about-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: var(--spacing-md);
+        text-align: center;
+    }
+
+    .about-section p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #444;
+        text-align: center;
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+    }
+
+    .team-card {
+        background: var(--color-bg-white);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+
+    .team-card img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+    }
+
+    .team-info {
+        padding: 20px;
+    }
+
+    .team-info h3 {
+        margin-bottom: 5px;
+        color: var(--color-primary);
+    }
+    
+    .team-info span {
+        color: var(--color-accent);
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="page-header gs-reveal">
+    <div>
+        <h1 class="page-title">Our Story</h1>
+        <p style="font-size: 1.2rem; font-family: var(--font-heading); font-style: italic;">The Heart of Mahendranagar</p>
+    </div>
+</header>
+
+<div class="about-content">
+    <section class="about-section gs-reveal">
+        <h2>A Legacy of Taste</h2>
+        <p>Founded with a passion for mixing traditional recipes with modern culinary techniques, Olive Cafe was born in the heart of Mahendranagar. What started as a small coffee shop has grown into a premium dining experience, beloved by locals and travelers alike. We believe that food isn't just fuel—it's an experience, a memory, and "the love of your life."</p>
+    </section>
+
+    <section class="about-section gs-reveal">
+        <h2>Meet the Team</h2>
+        <div class="team-grid">
+            <div class="team-card gs-reveal gs-reveal-left">
+                <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?q=80&w=1968&auto=format&fit=crop" alt="Head Chef">
+                <div class="team-info">
+                    <h3>Ram Bahadur</h3>
+                    <span>Executive Chef</span>
+                </div>
+            </div>
+            <div class="team-card gs-reveal gs-reveal-right">
+                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop" alt="Manager">
+                <div class="team-info">
+                    <h3>Sita Sharma</h3>
+                    <span>General Manager</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    gsap.utils.toArray('.gs-reveal').forEach(function(elem) {
+        let x = 0, y = 50;
+        if (elem.classList.contains('gs-reveal-left')) { x = -100; y = 0; }
+        else if (elem.classList.contains('gs-reveal-right')) { x = 100; y = 0; }
+
+        gsap.fromTo(elem, {x: x, y: y, autoAlpha: 0}, {
+            duration: 1.25, x: 0, y: 0, autoAlpha: 1, ease: "expo", overwrite: "auto",
+            scrollTrigger: { trigger: elem, start: "top 85%", toggleActions: "play none none reverse" }
+        });
+    });
+});
+</script>
+{% endblock %}

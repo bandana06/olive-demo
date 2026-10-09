@@ -1,0 +1,434 @@
+{% extends 'base.html' %}
+{% block title %}Our Menu - Olive Cafe{% endblock %}
+
+{% block extra_head %}
+<style>
+    .page-header {
+        background: linear-gradient(rgba(30, 63, 32, 0.85), rgba(30, 63, 32, 0.85)), url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop') center/cover;
+        height: 40vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--color-bg-light);
+        text-align: center;
+    }
+    
+    .page-title {
+        font-size: 4rem;
+        color: var(--color-accent);
+    }
+
+    .menu-container {
+        max-width: 1200px;
+        margin: -50px auto 100px auto;
+        padding: 0 20px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .category-tabs {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 40px;
+        background: var(--color-bg-white);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .tab-btn {
+        background: transparent;
+        border: 2px solid var(--color-primary);
+        color: var(--color-primary);
+        padding: 10px 25px;
+        border-radius: 30px;
+        font-family: var(--font-heading);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+        background: var(--color-primary);
+        color: var(--color-accent);
+    }
+
+    .menu-category-section {
+        display: none;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .menu-category-section.active {
+        display: block;
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+    }
+
+    .menu-item-card {
+        background: var(--color-bg-white);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease;
+    }
+
+    .menu-item-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+
+    .menu-item-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        background-color: #eee;
+    }
+
+    .menu-item-details {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .menu-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .menu-item-title {
+        font-family: var(--font-heading);
+        font-size: 1.4rem;
+        color: var(--color-primary);
+        line-height: 1.2;
+    }
+
+    .menu-item-price {
+        font-weight: 700;
+        color: var(--color-accent);
+        font-size: 1.2rem;
+        white-space: nowrap;
+        margin-left: 15px;
+    }
+
+    .menu-item-desc {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        flex-grow: 1;
+    }
+
+    .add-to-cart-wrapper {
+        margin-top: auto;
+    }
+
+    .btn-add-cart {
+        width: 100%;
+        background-color: var(--color-primary);
+        color: var(--color-bg-light);
+        border: none;
+        padding: 12px;
+        border-radius: 6px;
+        font-family: var(--font-heading);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-add-cart:hover {
+        background-color: var(--color-accent);
+        color: var(--color-primary);
+    }
+
+    .btn-add-cart:hover {
+        background-color: var(--color-accent);
+        color: var(--color-primary);
+    }
+
+    /* Dietary Badges */
+    .dietary-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+
+    .badge-veg {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+    }
+
+    .badge-nonveg {
+        background-color: #ffebee;
+        color: #c62828;
+        border: 1px solid #ffcdd2;
+    }
+
+    .badge-vegan {
+        background-color: #e0f2f1;
+        color: #00695c;
+        border: 1px solid #b2dfdb;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="page-header gs-reveal">
+    <div>
+        <h1 class="page-title">Culinary Delights</h1>
+        <p style="font-size: 1.2rem; font-family: var(--font-heading); font-style: italic;">Savor Every Moment</p>
+    </div>
+</header>
+
+<div class="menu-container">
+    
+    <div style="text-align: center; margin-bottom: 30px;" class="gs-reveal">
+        <a href="/wheel/" style="display: inline-block; background: var(--color-accent); color: var(--color-primary); padding: 10px 20px; border-radius: 30px; text-decoration: none; font-weight: bold; font-family: var(--font-heading);">
+            <i class="fas fa-gift"></i> Check Today's Offers & Spin the Wheel!
+        </a>
+    </div>
+
+    {% if categories %}
+    <div class="category-tabs gs-reveal" style="margin-bottom: 20px;">
+        <button class="tab-btn active" data-target="all">All Categories</button>
+        {% for cat in categories %}
+            <button class="tab-btn" data-target="cat-{{ cat.slug }}">{{ cat.name }}</button>
+        {% endfor %}
+    </div>
+
+    <div class="dietary-filter gs-reveal" style="text-align: center; margin-bottom: 40px;">
+        <span style="font-weight: 600; color: var(--color-primary); margin-right: 15px;">Dietary Filter:</span>
+        <button class="diet-btn active" data-diet="all">All</button>
+        <button class="diet-btn" data-diet="veg"><span class="dietary-badge badge-veg" style="margin:0;">Veg</span></button>
+        <button class="diet-btn" data-diet="nonveg"><span class="dietary-badge badge-nonveg" style="margin:0;">Non-Veg</span></button>
+        <button class="diet-btn" data-diet="vegan"><span class="dietary-badge badge-vegan" style="margin:0;">Vegan</span></button>
+    </div>
+
+    <style>
+        .diet-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 1rem;
+            color: #666;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+            opacity: 0.6;
+            transform: scale(0.95);
+        }
+        .diet-btn.active, .diet-btn:hover {
+            opacity: 1;
+            transform: scale(1.05);
+            color: var(--color-primary);
+            font-weight: bold;
+        }
+    </style>
+
+    <!-- All Items Section -->
+    <div id="all" class="menu-category-section active">
+        <div class="menu-grid">
+            {% for item in menu_items %}
+            <div class="menu-item-card gs-reveal" data-diet="{{ item.dietary_preference }}">
+                {% if item.image %}
+                    <img class="menu-item-img" src="{{ item.image.url }}" alt="{{ item.name }}">
+                {% else %}
+                    <!-- Fallback image -->
+                    <img class="menu-item-img" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=2000&auto=format&fit=crop" alt="{{ item.name }}">
+                {% endif %}
+                <div class="menu-item-details">
+                    <div class="menu-item-header">
+                        <h3 class="menu-item-title">
+                            {% if item.dietary_preference == 'veg' %}
+                                <span class="dietary-badge badge-veg">Veg</span>
+                            {% elif item.dietary_preference == 'nonveg' %}
+                                <span class="dietary-badge badge-nonveg">Non-Veg</span>
+                            {% elif item.dietary_preference == 'vegan' %}
+                                <span class="dietary-badge badge-vegan">Vegan</span>
+                            {% endif %}
+                            {{ item.name }}
+                        </h3>
+                        <span class="menu-item-price">Rs. {{ item.price|floatformat:0 }}</span>
+                    </div>
+                    <p class="menu-item-desc">{{ item.description|default:"A delicious Olive Cafe specialty." }}</p>
+                    <div class="add-to-cart-wrapper">
+                        <button class="btn-add-cart add-to-cart" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price|floatformat:0 }}">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Category Specific Sections -->
+    {% for cat in categories %}
+    <div id="cat-{{ cat.slug }}" class="menu-category-section">
+        <h2 style="font-family: var(--font-heading); color: var(--color-primary); margin-bottom: 20px; text-align: center;">{{ cat.name }}</h2>
+        <div class="menu-grid">
+            {% for item in cat.items.all %}
+                {% if item.is_available %}
+                <div class="menu-item-card" data-diet="{{ item.dietary_preference }}">
+                    {% if item.image %}
+                        <img class="menu-item-img" src="{{ item.image.url }}" alt="{{ item.name }}">
+                    {% else %}
+                        <img class="menu-item-img" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=2000&auto=format&fit=crop" alt="{{ item.name }}">
+                    {% endif %}
+                    <div class="menu-item-details">
+                        <div class="menu-item-header">
+                            <h3 class="menu-item-title">
+                                {% if item.dietary_preference == 'veg' %}
+                                    <span class="dietary-badge badge-veg">Veg</span>
+                                {% elif item.dietary_preference == 'nonveg' %}
+                                    <span class="dietary-badge badge-nonveg">Non-Veg</span>
+                                {% elif item.dietary_preference == 'vegan' %}
+                                    <span class="dietary-badge badge-vegan">Vegan</span>
+                                {% endif %}
+                                {{ item.name }}
+                            </h3>
+                            <span class="menu-item-price">Rs. {{ item.price|floatformat:0 }}</span>
+                        </div>
+                        <p class="menu-item-desc">{{ item.description|default:"A delicious Olive Cafe specialty." }}</p>
+                        <div class="add-to-cart-wrapper">
+                            <button class="btn-add-cart add-to-cart" data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price|floatformat:0 }}">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div style="text-align: center; padding: 50px;">
+        <i class="fas fa-utensils" style="font-size: 3rem; color: #ccc; margin-bottom: 20px;"></i>
+        <h2>Menu is being updated...</h2>
+        <p>Our chefs are currently curating the database. Please check back soon!</p>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Tab switching and Dietary Filtering logic
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const sections = document.querySelectorAll('.menu-category-section');
+        const dietBtns = document.querySelectorAll('.diet-btn');
+        const allCards = document.querySelectorAll('.menu-item-card');
+
+        let currentActiveSectionId = 'all';
+        let currentActiveDiet = 'all';
+
+        function applyFilters() {
+            sections.forEach(s => {
+                if (s.id === currentActiveSectionId) {
+                    s.classList.add('active');
+                    // Filter cards within the active section
+                    const cardsInSection = s.querySelectorAll('.menu-item-card');
+                    cardsInSection.forEach(card => {
+                        if (currentActiveDiet === 'all' || card.getAttribute('data-diet') === currentActiveDiet) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+            ScrollTrigger.refresh(); // Refresh scroll triggers after layout change
+        }
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentActiveSectionId = btn.getAttribute('data-target');
+                applyFilters();
+            });
+        });
+
+        dietBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                dietBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentActiveDiet = btn.getAttribute('data-diet');
+                applyFilters();
+            });
+        });
+
+        // Add to cart logic
+        document.querySelectorAll('.add-to-cart').forEach(btn => {
+            btn.addEventListener('click', function() {
+                let item = {
+                    id: this.dataset.id,
+                    name: this.dataset.name,
+                    price: parseFloat(this.dataset.price),
+                    qty: 1
+                };
+                
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                let existing = cart.find(i => i.id === item.id);
+                if (existing) {
+                    existing.qty++;
+                } else {
+                    cart.push(item);
+                }
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                
+                // Visual feedback
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check"></i> Added!';
+                this.style.backgroundColor = 'var(--color-accent)';
+                this.style.color = 'var(--color-primary)';
+                
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.style.backgroundColor = '';
+                    this.style.color = '';
+                }, 1500);
+            });
+        });
+
+        // GSAP reveals
+        gsap.utils.toArray('.gs-reveal').forEach(function(elem) {
+            gsap.fromTo(elem, {y: 50, autoAlpha: 0}, {
+                duration: 1, y: 0, autoAlpha: 1, ease: "expo", overwrite: "auto",
+                scrollTrigger: { trigger: elem, start: "top 90%", toggleActions: "play none none reverse" }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - Olive Cafe{% endblock %}
+
+{% block extra_head %}
+<style>
+    .checkout-container {
+        padding: 100px 20px;
+        color: var(--color-primary);
+        max-width: 1000px;
+        margin: 0 auto;
+        min-height: 70vh;
+    }
+
+    .checkout-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .checkout-header h1 {
+        font-size: 3rem;
+        font-family: var(--font-heading);
+        color: var(--color-primary);
+    }
+
+    .checkout-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
+
+    .checkout-card {
+        background: var(--color-bg-white);
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.02);
+    }
+
+    .checkout-card h2 {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        color: var(--color-accent);
+        border-bottom: 2px solid var(--color-bg-light);
+        padding-bottom: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #eee;
+        border-radius: 8px;
+        font-family: var(--font-body);
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--color-accent);
+    }
+
+    /* Order Summary Styles */
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .summary-item:last-child {
+        border-bottom: none;
+    }
+
+    .summary-item.total {
+        font-weight: 700;
+        font-size: 1.3rem;
+        border-top: 2px solid var(--color-primary);
+        margin-top: 10px;
+        padding-top: 15px;
+    }
+
+    .summary-item.delivery {
+        color: #777;
+        font-style: italic;
+    }
+
+    .btn-whatsapp {
+        width: 100%;
+        background-color: #25D366; /* WhatsApp Green */
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 30px;
+        font-family: var(--font-heading);
+        font-size: 1.2rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 2rem;
+    }
+
+    .btn-whatsapp:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .checkout-split {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkout-container gs-reveal">
+    <div class="checkout-header">
+        <h1>Complete Your Order</h1>
+        <p style="font-size: 1.1rem; color: #666; margin-top: 10px;">Almost there! We'll confirm your details securely via WhatsApp.</p>
+    </div>
+    
+    <div class="checkout-split">
+        <!-- Billing Details -->
+        <div class="checkout-card gs-reveal gs-reveal-left">
+            <h2>Your Details</h2>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" class="form-control" required placeholder="John Doe">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" class="form-control" required placeholder="e.g. 9800000000">
+                </div>
+
+                <div class="form-group">
+                    <label for="order-type">Order Type</label>
+                    <select id="order-type" class="form-control">
+                        <option value="Takeaway">Takeaway</option>
+                        <option value="Delivery">Delivery (Within Mahendranagar)</option>
+                        <option value="Dine-in">Dine-in (Table Booking)</option>
+                    </select>
+                </div>
+
+                <div id="address-container" class="form-group" style="display: none;">
+                    <label for="address">Delivery Address</label>
+                    <input type="text" id="address" class="form-control" placeholder="Street, Landmark">
+                </div>
+
+                <div id="table-booking-container" class="form-group" style="display: none;">
+                    <label for="party-size">Party Size</label>
+                    <input type="number" id="party-size" class="form-control" min="1" max="20" placeholder="Number of guests">
+                </div>
+            </form>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="checkout-card gs-reveal gs-reveal-right">
+            <h2>Order Summary</h2>
+            <div id="summary-items">
+                <!-- Cart items injected here via JS -->
+            </div>
+            
+            <div class="summary-item delivery" id="delivery-fee-row" style="display: none;">
+                <span>Delivery Charge</span>
+                <span id="delivery-fee-amt">Rs. 100</span>
+            </div>
+
+            <div class="summary-item total">
+                <span>Total Amount</span>
+                <span id="grand-total-amt">Rs. 0</span>
+            </div>
+
+            <button type="submit" form="checkout-form" class="btn-whatsapp">
+                <i class="fab fa-whatsapp" style="font-size: 1.5rem;"></i> Order via WhatsApp
+            </button>
+            <p style="text-align: center; font-size: 0.85rem; color: #888; margin-top: 15px;">You will be redirected to WhatsApp to finalize the order with our team.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const orderTypeSelect = document.getElementById('order-type');
+        const tableContainer = document.getElementById('table-booking-container');
+        const addressContainer = document.getElementById('address-container');
+        const deliveryFeeRow = document.getElementById('delivery-fee-row');
+        const summaryItemsContainer = document.getElementById('summary-items');
+        const grandTotalEl = document.getElementById('grand-total-amt');
+        const form = document.getElementById('checkout-form');
+        
+        const DELIVERY_CHARGE = 100; // Configurable delivery charge
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        if (cart.length === 0) {
+            alert("Your cart is empty! Redirecting to menu.");
+            window.location.href = '/ordering/menu/';
+            return;
+        }
+
+        let baseTotal = 0;
+
+        // Render Cart Summary
+        function renderSummary() {
+            summaryItemsContainer.innerHTML = '';
+            baseTotal = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.qty;
+                baseTotal += itemTotal;
+                
+                const row = document.createElement('div');
+                row.className = 'summary-item';
+                row.innerHTML = `<span>${item.name} <strong style="color:var(--color-accent)">x${item.qty}</strong></span><span>Rs. ${itemTotal}</span>`;
+                summaryItemsContainer.appendChild(row);
+            });
+
+            updateTotals();
+        }
+
+        // Update Totals based on Order Type
+        function updateTotals() {
+            const type = orderTypeSelect.value;
+            let finalTotal = baseTotal;
+
+            if (type === 'Delivery') {
+                deliveryFeeRow.style.display = 'flex';
+                addressContainer.style.display = 'block';
+                tableContainer.style.display = 'none';
+                finalTotal += DELIVERY_CHARGE;
+            } else if (type === 'Dine-in') {
+                deliveryFeeRow.style.display = 'none';
+                addressContainer.style.display = 'none';
+                tableContainer.style.display = 'block';
+            } else { // Takeaway
+                deliveryFeeRow.style.display = 'none';
+                addressContainer.style.display = 'none';
+                tableContainer.style.display = 'none';
+            }
+
+            grandTotalEl.innerText = `Rs. ${finalTotal}`;
+        }
+
+        // Initialize display
+        renderSummary();
+
+        // Listen for Order Type changes
+        orderTypeSelect.addEventListener('change', updateTotals);
+
+        // Handle Submission to WhatsApp
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const type = orderTypeSelect.value;
+            
+            let message = `*☕ NEW ORDER - OLIVE CAFE*\n`;
+            message += `---------------------------------\n`;
+            message += `*👤 Customer:* ${name}\n*📞 Phone:* ${phone}\n*🛵 Type:* ${type}\n`;
+            
+            if (type === 'Dine-in') {
+                const partySize = document.getElementById('party-size').value;
+                if(partySize) message += `*👥 Party Size:* ${partySize} guests\n`;
+            } else if (type === 'Delivery') {
+                const address = document.getElementById('address').value;
+                if(address) message += `*📍 Address:* ${address}\n`;
+            }
+            
+            message += `---------------------------------\n`;
+            message += `*📋 Order Details:*\n`;
+            
+            cart.forEach(item => {
+                message += `▪ ${item.name} (x${item.qty}) -> Rs. ${item.price * item.qty}\n`;
+            });
+            
+            message += `---------------------------------\n`;
+            if (type === 'Delivery') {
+                message += `*Delivery Charge:* Rs. ${DELIVERY_CHARGE}\n`;
+                message += `*💰 GRAND TOTAL:* Rs. ${baseTotal + DELIVERY_CHARGE}\n`;
+            } else {
+                message += `*💰 GRAND TOTAL:* Rs. ${baseTotal}\n`;
+            }
+            
+            message += `---------------------------------\n`;
+            message += `_Please confirm this order via reply. Thank you!_`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            // Replace with actual Olive Cafe WhatsApp Number
+            const waNumber = "+9779800000000"; 
+            
+            // Clear cart
+            localStorage.removeItem('cart');
+            
+            window.open(`https://wa.me/${waNumber}?text=${encodedMessage}`, '_blank');
+            window.location.href = '/';
+        });
+
+        // Intro Animation
+        gsap.utils.toArray('.gs-reveal').forEach(function(elem) {
+            let x = 0, y = 50;
+            if (elem.classList.contains('gs-reveal-left')) { x = -50; y = 0; }
+            else if (elem.classList.contains('gs-reveal-right')) { x = 50; y = 0; }
+
+            gsap.fromTo(elem, {x: x, y: y, autoAlpha: 0}, {
+                duration: 1, x: 0, y: 0, autoAlpha: 1, ease: "expo", overwrite: "auto"
+            });
+        });
+    });
+</script>
+{% endblock %}

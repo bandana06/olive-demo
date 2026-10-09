@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}Our Team - Olive Cafe{% endblock %}
+
+{% block extra_head %}
+<style>
+    .page-header {
+        background: linear-gradient(rgba(30, 63, 32, 0.85), rgba(30, 63, 32, 0.85)), url('https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=2070&auto=format&fit=crop') center/cover;
+        height: 50vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--color-bg-light);
+        text-align: center;
+    }
+    
+    .page-title {
+        font-size: 4rem;
+        color: var(--color-accent);
+    }
+
+    .team-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-lg);
+    }
+
+    .team-intro {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto var(--spacing-xl) auto;
+    }
+
+    .team-intro h2 {
+        font-size: 2.5rem;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .team-intro p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #444;
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 40px;
+    }
+
+    .team-card {
+        background: var(--color-bg-white);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .team-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .team-card img {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+    }
+
+    .team-info {
+        padding: 30px 20px;
+    }
+
+    .team-info h3 {
+        margin-bottom: 5px;
+        color: var(--color-primary);
+        font-size: 1.5rem;
+    }
+    
+    .team-info span {
+        color: var(--color-accent);
+        font-weight: 500;
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    .team-info p {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="page-header gs-reveal">
+    <div>
+        <h1 class="page-title">The Faces Behind the Flavor</h1>
+        <p style="font-size: 1.2rem; font-family: var(--font-heading); font-style: italic;">Meet Our Talented Team</p>
+    </div>
+</header>
+
+<div class="team-content">
+    <div class="team-intro gs-reveal">
+        <h2>Dedicated to Excellence</h2>
+        <p>At Olive Cafe, we firmly believe that great food and great service come from passionate people. Our team members are the heartbeat of the restaurant, bringing their unique skills and warm smiles to make your dining experience truly memorable.</p>
+    </div>
+
+    <div class="team-grid">
+        <div class="team-card gs-reveal gs-reveal-left">
+            <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?q=80&w=1968&auto=format&fit=crop" alt="Head Chef">
+            <div class="team-info">
+                <h3>Ram Bahadur</h3>
+                <span>Executive Chef</span>
+                <p>With over 15 years of culinary experience, Chef Ram brings a blend of traditional Nepali flavors and modern continental techniques.</p>
+            </div>
+        </div>
+        
+        <div class="team-card gs-reveal">
+            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop" alt="Manager">
+            <div class="team-info">
+                <h3>Sita Sharma</h3>
+                <span>General Manager</span>
+                <p>Sita ensures every guest feels like royalty. Her attention to detail and warm hospitality sets the standard for Olive Cafe.</p>
+            </div>
+        </div>
+
+        <div class="team-card gs-reveal">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop" alt="Barista">
+            <div class="team-info">
+                <h3>Rabin Thapa</h3>
+                <span>Head Barista</span>
+                <p>Passionate about coffee culture, Rabin crafts every latte and espresso perfectly, sourcing the finest local beans.</p>
+            </div>
+        </div>
+        
+        <div class="team-card gs-reveal gs-reveal-right">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1974&auto=format&fit=crop" alt="Pastry Chef">
+            <div class="team-info">
+                <h3>Aarati Joshi</h3>
+                <span>Pastry Chef</span>
+                <p>The magic behind our desserts. Aarati's delicate touch makes every cheesecake, tart, and pastry a work of art.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    gsap.utils.toArray('.gs-reveal').forEach(function(elem) {
+        let x = 0, y = 50;
+        if (elem.classList.contains('gs-reveal-left')) { x = -100; y = 0; }
+        else if (elem.classList.contains('gs-reveal-right')) { x = 100; y = 0; }
+
+        gsap.fromTo(elem, {x: x, y: y, autoAlpha: 0}, {
+            duration: 1.25, x: 0, y: 0, autoAlpha: 1, ease: "expo", overwrite: "auto",
+            scrollTrigger: { trigger: elem, start: "top 85%", toggleActions: "play none none reverse" }
+        });
+    });
+});
+</script>
+{% endblock %}

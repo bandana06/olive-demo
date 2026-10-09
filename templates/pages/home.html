@@ -1,0 +1,529 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Olive Cafe - The Love of Your Life through Food{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Hero Section */
+    .hero {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background: linear-gradient(rgba(30, 63, 32, 0.8), rgba(30, 63, 32, 0.9)), url('https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+        color: var(--color-bg-light);
+        margin-top: -80px; /* pull up behind nav */
+        padding-top: 80px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-content {
+        max-width: 800px;
+        padding: var(--spacing-lg);
+        z-index: 2;
+    }
+
+    .hero-title {
+        font-size: 4rem;
+        margin-bottom: var(--spacing-sm);
+        color: var(--color-accent);
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+        margin-bottom: var(--spacing-lg);
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    .btn-primary {
+        display: inline-block;
+        background-color: var(--color-accent);
+        color: var(--color-primary);
+        padding: var(--spacing-md) var(--spacing-xl);
+        font-family: var(--font-heading);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-radius: 4px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+    .btn-primary:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        background-color: #e5c150;
+    }
+
+    .hero-btn {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    /* Atmosphere Section */
+    .atmosphere {
+        padding: var(--spacing-xl) 0;
+        background-color: var(--color-bg-white);
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-lg);
+    }
+
+    .section-title {
+        text-align: center;
+        font-size: 3rem;
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .split-layout {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xl);
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .split-layout.reverse {
+        flex-direction: row-reverse;
+    }
+
+    .split-text {
+        flex: 1;
+    }
+
+    .split-image {
+        flex: 1;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .split-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transform: scale(1.1);
+        transition: transform 0.8s ease;
+    }
+
+    .split-image:hover img {
+        transform: scale(1);
+    }
+
+    /* Spin the Wheel Promo */
+    .promo-banner {
+        background-color: var(--color-primary);
+        color: var(--color-bg-light);
+        text-align: center;
+        padding: var(--spacing-xl) var(--spacing-lg);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .promo-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .promo-title {
+        color: var(--color-accent);
+        font-size: 3rem;
+    }
+
+    /* Reviews Section */
+    .reviews {
+        padding: var(--spacing-xl) 0;
+        background-color: var(--color-bg-light);
+    }
+
+    .review-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: var(--spacing-lg);
+    }
+
+    .review-card {
+        background: var(--color-bg-white);
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        position: relative;
+    }
+
+    .review-stars {
+        color: var(--color-accent);
+        margin-bottom: 15px;
+    }
+
+    .review-text {
+        font-style: italic;
+        margin-bottom: 15px;
+        color: #555;
+    }
+
+    .review-author {
+        font-weight: 600;
+        color: var(--color-primary);
+    }
+
+    /* Featured Menu */
+    .featured-menu {
+        padding: var(--spacing-xl) 0;
+        background-color: var(--color-bg-white);
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: var(--spacing-lg);
+    }
+
+    .menu-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px 20px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+        border: 1px solid rgba(0,0,0,0.02);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .menu-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+    }
+
+    .menu-card-img-wrapper {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 20px auto;
+        border-radius: 50%;
+        padding: 5px;
+        background: #FFF9EB; /* Light pale yellow halo */
+        border: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .menu-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .menu-card h3 {
+        font-family: var(--font-heading);
+        color: var(--color-primary);
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+
+    .menu-card-price {
+        color: var(--color-accent);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    .menu-card-desc {
+        color: #777;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* Dietary Badges */
+    .dietary-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        vertical-align: middle;
+    }
+
+    .badge-veg {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+    }
+
+    .badge-nonveg {
+        background-color: #ffebee;
+        color: #c62828;
+        border: 1px solid #ffcdd2;
+    }
+
+    .badge-vegan {
+        background-color: #e0f2f1;
+        color: #00695c;
+        border: 1px solid #b2dfdb;
+    }
+
+    /* Gallery Section */
+    .gallery {
+        padding: var(--spacing-xl) 0;
+        background-color: #1a1a1a;
+        color: white;
+    }
+
+    .gallery .section-title {
+        color: var(--color-bg-light);
+    }
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: var(--spacing-lg);
+    }
+
+    .gallery-item {
+        height: 250px;
+        overflow: hidden;
+        border-radius: 8px;
+        position: relative;
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .gallery-item:hover img {
+        transform: scale(1.1);
+    }
+
+    .gallery-overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(30, 63, 32, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .gallery-item:hover .gallery-overlay {
+        opacity: 1;
+    }
+
+    .gallery-overlay i {
+        font-size: 2rem;
+        color: var(--color-accent);
+    }
+
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.5rem; }
+        .split-layout, .split-layout.reverse { flex-direction: column; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Experience the Love of Your Life</h1>
+        <p class="hero-subtitle">Through extraordinary food and timeless ambiance.</p>
+        <a href="/ordering/menu/" class="btn-primary hero-btn">Explore Menu</a>
+    </div>
+</section>
+
+<!-- Atmosphere Section -->
+<section class="atmosphere">
+    <div class="container">
+        <h2 class="section-title gs-reveal">A Premium Experience</h2>
+        
+        <div class="split-layout">
+            <div class="split-text gs-reveal gs-reveal-left">
+                <h3>Elegance in Every Detail</h3>
+                <p>Welcome to Olive Cafe in Mahendranagar. Our interior is carefully crafted with deep greens, warm creams, and sparkling white accents, designed to make you feel like royalty.</p>
+            </div>
+            <div class="split-image gs-reveal gs-reveal-right">
+                <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop" alt="Restaurant Interior">
+            </div>
+        </div>
+
+        <div class="split-layout reverse">
+            <div class="split-text gs-reveal gs-reveal-right">
+                <h3>Culinary Masterpieces</h3>
+                <p>From the moment you walk through our doors, prepare for an unforgettable journey. Every dish is a work of art, prepared with the finest ingredients.</p>
+            </div>
+            <div class="split-image gs-reveal gs-reveal-left">
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop" alt="Fine Dining Food">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Menu Section -->
+<section class="featured-menu">
+    <div class="container">
+        <h2 class="section-title gs-reveal">Chef's Favorites</h2>
+        <div class="menu-grid">
+            {% for item in featured_items %}
+            <div class="menu-card gs-reveal" style="transition-delay: 0.{{ forloop.counter0 }}s;">
+                <div class="menu-card-img-wrapper">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=2000&auto=format&fit=crop" alt="{{ item.name }}">
+                    {% endif %}
+                </div>
+                <h3>
+                    {% if item.dietary_preference == 'veg' %}
+                        <span class="dietary-badge badge-veg">Veg</span>
+                    {% elif item.dietary_preference == 'nonveg' %}
+                        <span class="dietary-badge badge-nonveg">Non-Veg</span>
+                    {% elif item.dietary_preference == 'vegan' %}
+                        <span class="dietary-badge badge-vegan">Vegan</span>
+                    {% endif %}
+                    {{ item.name }}
+                </h3>
+                <p class="menu-card-price">Rs. {{ item.price|floatformat:0 }}</p>
+                <p class="menu-card-desc">{{ item.description|default:"A delicious Olive Cafe specialty." }}</p>
+            </div>
+            {% empty %}
+                <p style="text-align: center; grid-column: 1 / -1;">Amazing new dishes arriving soon!</p>
+            {% endfor %}
+        </div>
+        <div style="text-align: center; margin-top: 40px;" class="gs-reveal">
+            <a href="/ordering/menu/" class="btn-primary" style="background-color: var(--color-primary); color: white; padding: 12px 30px; border-radius: 30px;">See All Menu</a>
+        </div>
+    </div>
+</section>
+
+<!-- Spin the Wheel Banner -->
+<section class="promo-banner">
+    <div class="promo-content gs-reveal">
+        <h2 class="promo-title">Feeling Lucky?</h2>
+        <p style="margin-bottom: 2rem; font-size: 1.2rem;">Spin the wheel to win exclusive discounts, free desserts, and more!</p>
+        <a href="/wheel" class="btn-primary">Spin Now</a>
+    </div>
+</section>
+
+<!-- Testimonials / Reviews -->
+<section class="reviews">
+    <div class="container">
+        <h2 class="section-title gs-reveal">What Our Guests Say</h2>
+        <div class="review-grid">
+            <div class="review-card gs-reveal">
+                <i class="fas fa-quote-left" style="font-size: 2rem; color: #eee; position: absolute; top: 20px; right: 20px; z-index: 0;"></i>
+                <div style="position: relative; z-index: 1;">
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="review-text">"Absolutely the best dining experience in Mahendranagar. The ambiance is incredibly premium and the Truffle Pasta is to die for."</p>
+                    <p class="review-author">- Aayush B.</p>
+                </div>
+            </div>
+            <div class="review-card gs-reveal" style="transition-delay: 0.1s;">
+                <i class="fas fa-quote-left" style="font-size: 2rem; color: #eee; position: absolute; top: 20px; right: 20px; z-index: 0;"></i>
+                <div style="position: relative; z-index: 1;">
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="review-text">"I love how I can order directly to their WhatsApp. It's so fast and the food arrives piping hot. The 'Spin the Wheel' discounts are a genius touch."</p>
+                    <p class="review-author">- Sneha K.</p>
+                </div>
+            </div>
+            <div class="review-card gs-reveal" style="transition-delay: 0.2s;">
+                <i class="fas fa-quote-left" style="font-size: 2rem; color: #eee; position: absolute; top: 20px; right: 20px; z-index: 0;"></i>
+                <div style="position: relative; z-index: 1;">
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="review-text">"Beautiful interior, very Instagrammable! The coffee matches the aesthetics. Highly recommend for dates or aesthetic hangouts."</p>
+                    <p class="review-author">- Dipendra T.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Instagram Gallery -->
+<section class="gallery">
+    <div class="container">
+        <h2 class="section-title gs-reveal">Follow The Journey</h2>
+        <p class="gs-reveal" style="text-align: center; margin-bottom: 20px;"><a href="https://instagram.com/olivecafe.mhn" target="_blank" style="color: var(--color-accent);"><i class="fab fa-instagram"></i> @olivecafe.mhn</a></p>
+        
+        <div class="gallery-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; align-items: flex-start;">
+            {% for post in instagram_posts %}
+            <div class="gs-reveal" style="min-width: 320px; max-width: 350px;">
+                <blockquote class="instagram-media" data-instgrm-permalink="{{ post.url }}?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
+                </blockquote>
+            </div>
+            {% empty %}
+                <p style="text-align: center; width: 100%;">No recent posts available. Check our Instagram directly!</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script async src="//www.instagram.com/embed.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", (event) => {
+    // Hero Animation Setup (delayed to wait for intro overlay)
+    const playHeroAnimation = () => {
+        const tl = gsap.timeline();
+        tl.to(".hero-title", {opacity: 1, y: 0, duration: 1, ease: "power3.out"})
+          .to(".hero-subtitle", {opacity: 1, y: 0, duration: 1, ease: "power3.out"}, "-=0.7")
+          .to(".hero-btn", {opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.7)"}, "-=0.5");
+    };
+
+    if (sessionStorage.getItem('introPlayed') === 'true') {
+        // If intro already played, play hero instantly
+        playHeroAnimation();
+    } else {
+        // Wait for intro to finish before playing hero
+        setTimeout(playHeroAnimation, 3000); 
+    }
+
+    // Scroll Reveal Animations
+    gsap.utils.toArray('.gs-reveal').forEach(function(elem) {
+        let x = 0;
+        let y = 50;
+
+        if (elem.classList.contains('gs-reveal-left')) {
+            x = -100;
+            y = 0;
+        } else if (elem.classList.contains('gs-reveal-right')) {
+            x = 100;
+            y = 0;
+        }
+
+        gsap.fromTo(elem, 
+            {x: x, y: y, autoAlpha: 0},
+            {
+                duration: 1.25, 
+                x: 0, 
+                y: 0, 
+                autoAlpha: 1, 
+                ease: "expo", 
+                overwrite: "auto",
+                scrollTrigger: {
+                    trigger: elem,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                }
+            }
+        );
+    });
+});
+</script>
+{% endblock %}

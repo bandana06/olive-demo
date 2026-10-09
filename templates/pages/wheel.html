@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+{% block title %}Spin & Win - Olive Cafe{% endblock %}
+
+{% block extra_head %}
+<style>
+    .wheel-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 70vh;
+        padding: 40px 20px;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .wheel-title {
+        color: var(--color-primary);
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+
+    .wheel-wrapper {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        margin: 30px 0;
+    }
+
+    /* The glowing background behind the wheel */
+    .wheel-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
+        z-index: 0;
+        opacity: 0.5;
+        animation: pulse 2s infinite alternate;
+    }
+
+    .wheel {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 4px solid var(--color-primary);
+        position: relative;
+        overflow: hidden;
+        transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); /* Smooth ease out */
+        z-index: 1;
+        /* create conic gradient for segments */
+        background: conic-gradient(
+            var(--color-bg-white) 0deg 60deg,
+            var(--color-secondary) 60deg 120deg,
+            var(--color-bg-white) 120deg 180deg,
+            var(--color-secondary) 180deg 240deg,
+            var(--color-bg-white) 240deg 300deg,
+            var(--color-secondary) 300deg 360deg
+        );
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    /* Labels inside the wheel (simplified approach using absolute positioning) */
+    .wheel-label {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 50%;
+        height: 20px;
+        transform-origin: 0 50%;
+        font-weight: bold;
+        font-family: var(--font-heading);
+        font-size: 14px;
+        color: var(--color-text-dark);
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+    }
+    
+    /* Label colors depending on slice background */
+    .wheel-label:nth-child(even) { color: var(--color-bg-light); }
+    .wheel-label:nth-child(odd) { color: var(--color-primary); }
+
+    .wheel-label:nth-child(1) { transform: translateY(-50%) rotate(30deg); }
+    .wheel-label:nth-child(2) { transform: translateY(-50%) rotate(90deg); }
+    .wheel-label:nth-child(3) { transform: translateY(-50%) rotate(150deg); }
+    .wheel-label:nth-child(4) { transform: translateY(-50%) rotate(210deg); }
+    .wheel-label:nth-child(5) { transform: translateY(-50%) rotate(270deg); }
+    .wheel-label:nth-child(6) { transform: translateY(-50%) rotate(330deg); }
+
+    .wheel-pointer {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0; 
+        height: 0; 
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-top: 30px solid var(--color-accent);
+        z-index: 2;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+
+    .wheel-center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        background-color: var(--color-primary);
+        border: 3px solid var(--color-accent);
+        border-radius: 50%;
+        z-index: 2;
+    }
+
+    .spin-btn {
+        margin-top: 30px;
+        font-size: 1.2rem;
+        padding: 15px 40px;
+        border-radius: 30px;
+        box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+    }
+
+    #result-modal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.8);
+        z-index: 10000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: var(--color-bg-light);
+        padding: 40px;
+        border-radius: 12px;
+        text-align: center;
+        max-width: 400px;
+        border: 4px solid var(--color-accent);
+        position: relative;
+    }
+
+    .modal-title {
+        color: var(--color-primary);
+        font-family: var(--font-heading);
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: var(--color-text-dark);
+    }
+
+    @keyframes pulse {
+        from { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+        to { transform: translate(-50%, -50%) scale(1.1); opacity: 0.6; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wheel-container">
+    {% if offers.count >= 6 %}
+        <h1 class="wheel-title gs-reveal">Test Your Luck!</h1>
+        <p class="gs-reveal" style="font-size: 1.2rem; margin-bottom: 20px;">Spin to win a special Olive Cafe treat.</p>
+
+        <div class="wheel-wrapper gs-reveal">
+            <div class="wheel-glow"></div>
+            <div class="wheel-pointer"></div>
+            <div class="wheel" id="wheel">
+                <!-- 6 Segments -->
+                {% for offer in offers|slice:":6" %}
+                    <div class="wheel-label">{{ offer.name }}</div>
+                {% endfor %}
+            </div>
+            <div class="wheel-center"></div>
+        </div>
+
+        <button id="spin-btn" class="btn-primary spin-btn gs-reveal">SPIN THE WHEEL</button>
+    {% else %}
+        <div class="coming-soon-banner gs-reveal" style="text-align: center; max-width: 600px; padding: 40px; background: var(--color-bg-white); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 5px solid var(--color-accent);">
+            <i class="fas fa-gift" style="font-size: 4rem; color: var(--color-accent); margin-bottom: 20px;"></i>
+            <h1 style="font-size: 3rem; color: var(--color-primary); margin-bottom: 15px; font-family: var(--font-heading);">Something Exciting is Coming!</h1>
+            <p style="font-size: 1.2rem; color: #555; line-height: 1.6; margin-bottom: 20px;">We are brewing up some amazing new offers and prizes for our Spin the Wheel game.</p>
+            <p style="font-size: 1.1rem; color: #555; margin-bottom: 30px;"><strong>How to get notified:</strong></p>
+            <ul style="list-style: none; padding: 0; text-align: left; max-width: 400px; margin: 0 auto 30px auto;">
+                <li style="margin-bottom: 10px; padding-left: 30px; position: relative;"><i class="fas fa-check" style="color: var(--color-primary); position: absolute; left: 0; top: 5px;"></i> Install our App from your browser menu.</li>
+                <li style="margin-bottom: 10px; padding-left: 30px; position: relative;"><i class="fas fa-check" style="color: var(--color-primary); position: absolute; left: 0; top: 5px;"></i> Allow push notifications.</li>
+                <li style="padding-left: 30px; position: relative;"><i class="fas fa-check" style="color: var(--color-primary); position: absolute; left: 0; top: 5px;"></i> Be the first to know when the wheel goes live!</li>
+            </ul>
+            <a href="/ordering/menu/" class="btn-primary" style="font-size: 1.1rem; padding: 12px 30px;">Explore Our Menu Instead</a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Result Modal -->
+{% if offers.count >= 6 %}
+<div id="result-modal">
+    <div class="modal-content">
+        <span class="modal-close" id="modal-close">&times;</span>
+        <h2 class="modal-title">Congratulations!</h2>
+        <p id="result-text" style="font-size: 1.2rem; margin-bottom: 20px; font-weight: bold;"></p>
+        <p style="font-size: 0.9rem; color: #666;">Take a screenshot and show it at the counter, or mention it when you order via WhatsApp!</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const wheel = document.getElementById('wheel');
+    const spinBtn = document.getElementById('spin-btn');
+    const resultModal = document.getElementById('result-modal');
+    const resultText = document.getElementById('result-text');
+    const modalClose = document.getElementById('modal-close');
+
+    // Segments mapping based on the conic gradient and labels setup
+    // 6 segments = 60 degrees each
+    // Segments starting from top (0 deg) going clockwise:
+    // Because CSS rotates clockwise, the pointer is at 0 degrees (top).
+    // As wheel rotates clockwise, the segments pass the pointer in REVERSE order.
+    // 1: 10% OFF (0-60)
+    // 2: Free Coffee (60-120)
+    // 3: Better Luck (120-180)
+    // 4: Free Dessert (180-240)
+    // 5: 15% OFF (240-300)
+    // 6: Try Again (300-360)
+
+    // Segments mapping based on the conic gradient and labels setup
+    const segments = [];
+    {% for offer in offers|slice:":6" %}
+        segments.push("{{ offer.name }}");
+    {% endfor %}
+
+    let currentRotation = 0;
+    let isSpinning = false;
+
+{% if offers.count >= 6 %}
+    // Check if recently spun
+    if (localStorage.getItem('lastSpunDate')) {
+        const lastSpun = new Date(localStorage.getItem('lastSpunDate'));
+        const now = new Date();
+        const diffHours = Math.abs(now - lastSpun) / 36e5;
+        
+        if (diffHours < 24) {
+            spinBtn.innerText = "COME BACK TOMORROW";
+            spinBtn.disabled = true;
+            spinBtn.style.opacity = "0.5";
+            spinBtn.style.cursor = "not-allowed";
+        }
+    }
+
+    spinBtn.addEventListener('click', () => {
+        if (isSpinning || spinBtn.disabled) return;
+        isSpinning = true;
+
+        // Base spins (at least 3 full rotations) + random degrees
+        const baseSpins = 360 * 4; 
+        const randomDeg = Math.floor(Math.random() * 360);
+        
+        currentRotation += baseSpins + randomDeg;
+        
+        // Apply rotation
+        wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+        // Calculate result after animation (4 seconds)
+        setTimeout(() => {
+            const actualRotation = currentRotation % 360;
+            const pointerDegree = (360 - actualRotation) % 360;
+            const segmentIndex = Math.floor(pointerDegree / 60);
+            
+            const winText = segments[segmentIndex];
+            
+            // Check if it's a "loss" segment based on common keywords
+            const isLoss = winText.toLowerCase().includes("try again") || winText.toLowerCase().includes("better luck");
+            
+            if (isLoss) {
+                document.querySelector('.modal-title').innerText = "Aw, Snap!";
+                resultText.innerText = winText;
+            } else {
+                document.querySelector('.modal-title').innerText = "Congratulations!";
+                resultText.innerText = `You won: ${winText}!`;
+            }
+
+            resultModal.style.display = 'flex';
+            
+            gsap.fromTo(".modal-content", {scale: 0.5, opacity: 0}, {scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)"});
+
+            localStorage.setItem('lastSpunDate', new Date().toISOString());
+            spinBtn.innerText = "COME BACK TOMORROW";
+            spinBtn.disabled = true;
+            spinBtn.style.opacity = "0.5";
+            spinBtn.style.cursor = "not-allowed";
+            
+            isSpinning = false;
+        }, 4000);
+    });
+
+    modalClose.addEventListener('click', () => {
+        resultModal.style.display = 'none';
+    });
+{% endif %}
+});
+</script>
+{% endblock %}
